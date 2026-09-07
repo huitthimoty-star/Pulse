@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulse — Social Media</title>
+
+<style>
+:root{
+  --bg:#f4f6f8;
+  --card:#fff;
+  --text:#18212b;
+  --muted:#718096;
+  --line:#e5e9ef;
+  --accent:#5b5ce2;
+  --soft:#eef0ff;
+  --danger:#e5484d;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
+
+/* LOGIN */
+.login-screen{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#eef0ff,#f7f2ff);
+}
+.login-box{
+  width:min(420px,92%);
+  background:white;
+  border:1px solid var(--line);
+  padding:34px;
+  border-radius:24px;
+  box-shadow:0 20px 60px #3730a31a;
+}
+.logo{
+  flex-shrink:0;
+  font-weight:800;
+  font-size:24px;
+  color:var(--accent);
+  letter-spacing:-1px;
+}
+.login-box .logo{
+  display:block;
+  text-align:center;
+  margin-bottom:5px;
+}
+.login-box h1{text-align:center;margin:10px 0 5px}
+.login-box p{text-align:center;color:var(--muted);font-size:14px}
+.login-box input{
+  width:100%;
+  padding:13px;
+  margin-top:10px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  outline:none;
+}
+.login-box input:focus{border-color:var(--accent)}
+.primary{
+  width:100%;
+  margin-top:15px;
+  background:var(--accent);
+  color:white;
+  padding:13px;
+  border-radius:11px;
+  font-weight:700;
+}
+.primary:disabled{opacity:.6;cursor:not-allowed}
+.auth-links{display:flex;margin-top:10px}
+.auth-links button{
+  flex:1;
+  padding:10px;
+  border-radius:11px;
+  background:var(--soft);
+  color:var(--accent);
+  font-weight:700;
+}
+.demo{text-align:center;font-size:12px;color:var(--muted);margin-top:13px}
+
+/* APP */
+.app{min-height:100vh}
+.topbar{
+  height:66px;
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+  padding:0 28px;
+  gap:28px;
+}
+.search{flex:1;max-width:500px;position:relative}
+.search input{
+  width:100%;
+  padding:11px 16px 11px 42px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--bg);
+  outline:none;
+}
+.search span{position:absolute;left:15px;top:9px;font-size:20px}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.top-home-btn,.top-signout-btn{
+  height:40px;min-width:40px;padding:0 12px;border:0;border-radius:12px;
+  background:var(--bg);color:var(--accent);font-size:18px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  white-space:nowrap;
+}
+.top-home-btn:hover,.top-signout-btn:hover,.icon-btn:hover{filter:brightness(.97)}
+.top-label{font-size:15px}
+.icon-btn{
+  width:40px;height:40px;border-radius:12px;
+  background:var(--bg);font-size:18px;
+}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;color:white;font-weight:700;
+  background:linear-gradient(135deg,#5b5ce2,#a855f7);
+}
+.avatar-button{border:0;padding:0;cursor:pointer;flex:0 0 40px;width:40px;height:40px}
+
+.verified-badge{
+  display:inline-grid;place-items:center;
+  width:18px;height:18px;margin-left:5px;
+  border-radius:50%;background:#3b82f6;color:white;
+  font-size:11px;font-weight:900;vertical-align:2px;
+  box-shadow:0 0 0 2px var(--card);
+}
+.admin-badge{
+  display:inline-block;margin-left:7px;padding:3px 7px;
+  border-radius:999px;background:#eef0ff;color:var(--accent);
+  font-size:10px;font-weight:800;vertical-align:2px;
+  text-transform:uppercase;letter-spacing:.4px;
+}
+.admin-card{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:18px;margin-bottom:18px}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.admin-danger{background:#fff0f0;color:var(--danger);padding:9px 12px;border-radius:10px;font-weight:700}
+.admin-user{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.admin-user:last-child{border-bottom:0}
+.admin-user-info{flex:1}
+.admin-user-info small{display:block;color:var(--muted)}
+
+/* LAYOUT */
+.layout{
+  max-width:1250px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:220px minmax(0,650px) 280px;
+  gap:26px;
+  padding:28px 20px;
+}
+.sidebar{position:sticky;top:92px;height:max-content}
+.nav{display:grid;gap:6px}
+.nav button{
+  padding:13px 15px;text-align:left;background:transparent;
+  border-radius:12px;color:var(--muted);font-weight:600;
+}
+.nav button:hover,.nav button.active{background:var(--soft);color:var(--accent)}
+.profile-mini{
+  background:var(--card);border:1px solid var(--line);
+  padding:18px;border-radius:18px;margin-top:22px;text-align:center;
+}
+.profile-mini .avatar{margin:auto;width:58px;height:58px;font-size:20px}
+.profile-mini h3{margin:10px 0 2px}
+.profile-mini p{margin:0;color:var(--muted);font-size:13px}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+.page-title{margin:0 0 18px;font-size:25px}
+
+/* CARDS */
+.composer,.post,.right-card,.profile-card{
+  background:var(--card);border:1px solid var(--line);border-radius:18px;
+}
+
+/* COMPOSER */
+.composer{padding:17px;margin-bottom:18px}
+.composer-row{display:flex;gap:12px}
+.composer textarea{
+  flex:1;border:0;resize:none;outline:none;background:transparent;
+  padding:5px 0;min-height:58px;font-size:15px;
+}
+.composer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid var(--line);padding-top:12px;
+}
+.media-btn{background:transparent;color:var(--muted);font-weight:600}
+.post-btn{
+  background:var(--accent);color:white;padding:10px 18px;
+  border-radius:11px;font-weight:700;
+}
+
+/* POSTS */
+.post{padding:18px;margin-bottom:15px}
+.post-head{display:flex;gap:11px;align-items:center}
+.post-head .avatar{width:42px;height:42px}
+.post-head strong{display:block}
+.post-head small{color:var(--muted)}
+.more{margin-left:auto;background:transparent;font-size:20px;color:var(--muted)}
+.post-body{margin:15px 0;font-size:15px;line-height:1.55;word-break:break-word}
+.post-actions{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.action{background:transparent;color:var(--muted);padding:8px 12px;border-radius:9px}
+.action:hover{background:var(--bg)}
+.action.liked{color:var(--danger)}
+
+/* COMMENTS */
+.comments{display:none;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.comment{padding:8px 0;font-size:13px}
+.comment b{margin-right:5px}
+.comment-form{display:flex;gap:8px;margin-top:8px}
+.comment-form input{
+  flex:1;border:1px solid var(--line);border-radius:10px;
+  padding:9px 11px;outline:none;
+}
+
+/* SEARCH RESULTS */
+.search{position:relative}
+.search-results{
+  position:absolute;left:0;right:0;top:48px;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 14px 35px rgba(0,0,0,.12);
+  z-index:30;max-height:420px;overflow:auto;padding:8px;
+}
+.search-results.hidden{display:none}
+.search-result{
+  display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;
+  cursor:pointer;
+}
+.search-result:hover{background:var(--bg)}
+.search-result .sr-text{min-width:0;flex:1}
+.search-result .sr-text b,.search-result .sr-text small{display:block}
+.search-result .sr-text small{color:var(--muted);margin-top:2px}
+.search-result.post-result{align-items:flex-start}
+.search-result .sr-preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mobile-search-btn{display:none;border:0;background:#f4f5f8;color:var(--accent);width:40px;height:40px;border-radius:12px;font-size:20px}
+.profile-action-row{display:flex;gap:10px;align-items:center;margin-top:14px}
+
+.profile-edit-box{margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.profile-edit-box label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin:10px 0 6px}
+.profile-edit-box input,.profile-edit-box textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:var(--card);color:var(--text);outline:none}
+.profile-edit-box textarea{min-height:90px;resize:vertical}
+.profile-edit-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.profile-secondary-btn{background:var(--card);color:var(--text);border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-weight:700}
+.profile-edit-avatar{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.profile-edit-avatar .avatar{width:64px;height:64px;flex:0 0 64px}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.avatar.big-avatar img{border-radius:50%;width:100%;height:100%;object-fit:cover}
+.profile-follow-btn{border:0;background:var(--accent);color:white;padding:9px 16px;border-radius:10px;font-weight:700;cursor:pointer}
+.profile-follow-btn.following{background:var(--soft);color:var(--accent)}
+.profile-view-note{color:var(--muted);font-size:13px}
+.clickable-profile{cursor:pointer}
+.clickable-profile:hover{opacity:.82}
+/* RIGHT */
+.right-card{padding:18px;margin-bottom:18px}
+.right-card h3{margin-top:0}
+.trend{padding:10px 0;border-bottom:1px solid var(--line)}
+.trend:last-child{border:0}
+.trend small{color:var(--muted)}
+.trend strong{display:block;margin-top:2px}
+.person{display:flex;align-items:center;gap:10px;padding:9px 0}
+.person .avatar{width:38px;height:38px;font-size:13px}
+.person div:nth-child(2){flex:1}
+.follow{
+  background:var(--soft);color:var(--accent);padding:7px 10px;
+  border-radius:9px;font-weight:700;font-size:12px;
+}
+
+/* PROFILE */
+.profile-cover{
+  height:170px;border-radius:18px 18px 0 0;
+  background:linear-gradient(135deg,#5b5ce2,#a855f7,#ec4899);
+}
+.profile-info{padding:0 24px 24px}
+.big-avatar{
+  width:88px;height:88px;margin-top:-44px;
+  border:5px solid var(--card);font-size:28px;
+}
+.profile-info h2{margin:8px 0 3px}
+.profile-info p{color:var(--muted)}
+.stats{display:flex;gap:25px;margin-top:18px}
+.stats b{font-size:18px}
+.stats span{color:var(--muted);font-size:13px;margin-left:4px}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:25px;left:50%;transform:translateX(-50%);
+  background:#18212b;color:white;padding:11px 17px;border-radius:11px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:50;
+  max-width:90%;text-align:center;
+}
+.toast.show{opacity:1}
+
+.post-media{margin:14px 0;border-radius:14px;overflow:hidden;background:#f1f5f9;}
+.post-media img,.post-media video{display:block;width:100%;max-height:620px;object-fit:cover;}
+
+/* MEDIA UPLOAD */
+.avatar-button{border:0;cursor:pointer;font:inherit;padding:0;display:flex;align-items:center;justify-content:center;}
+.avatar-button:hover{transform:scale(1.03);}
+.media-preview{margin:14px 0 0 56px;border-radius:14px;overflow:hidden;max-width:520px;border:1px solid #e2e8f0;}
+.media-preview img,.media-preview video{display:block;width:100%;max-height:360px;object-fit:cover;}
+.media-preview .media-name{padding:8px 10px;font-size:13px;color:#718096;background:#f8fafc;}
+.media-preview.hidden{display:none;}
+
+/* TOP NAV HOME / SIGN OUT */
+.top-home-btn,.top-signout-btn{
+  border:0;
+  background:#f4f5f8;
+  color:#5b5bd6;
+  min-height:48px;
+  padding:0 15px;
+  border-radius:14px;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.top-home-btn:hover,.top-signout-btn:hover{filter:brightness(.97)}
+@media(max-width:650px){
+  .top-home-btn,.top-signout-btn{
+    min-width:44px;
+    width:44px;
+    height:48px;
+    padding:0;
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+}
+
+/* MOBILE */
+@media(max-width:1000px){
+  .layout{
+    grid-template-columns:75px minmax(0,650px);
+    justify-content:center;
+  }
+  .nav button{font-size:0;text-align:center}
+  .nav button:first-letter{font-size:20px}
+  .profile-mini,.rightbar{display:none}
+}
+@media(max-width:650px){
+  .topbar{height:64px;padding:0 12px;gap:8px}
+  .mobile-search-btn{display:flex;align-items:center;justify-content:center}
+  .search{display:none;position:absolute;left:12px;right:12px;top:64px;z-index:40}
+  .search.mobile-search-open{display:block}
+  .search-results{top:48px}
+  .layout{display:block;padding:16px 10px}
+  .sidebar{display:none}
+  .top-actions{gap:5px}
+  .top-home-btn,.top-signout-btn,.icon-btn{width:40px;min-width:40px;height:40px;padding:0;border-radius:12px}
+  .top-label{display:none}
+  .logo{font-size:23px;letter-spacing:-1.2px;flex-shrink:0}
+  .post,.composer{border-radius:14px}
+  .page-title{font-size:22px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN / SIGN UP -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <span class="logo">pulse.</span>
+
+    <h1 id="authTitle">Welcome back</h1>
+    <p id="authSubtitle">Sign in to your Pulse account.</p>
+
+    <input id="loginName" class="hidden" placeholder="Display name" autocomplete="name">
+    <input id="loginUsername" class="hidden" placeholder="Username" autocomplete="username">
+
+    <input id="loginEmail" type="email" placeholder="Email" autocomplete="email">
+    <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+
+    <button id="authButton" class="primary" type="button" onclick="handleAuth()">
+      Sign In
+    </button>
+
+    <div class="auth-links">
+      <button id="switchAuth" type="button" onclick="switchAuthMode()">
+        Create account
+      </button>
+    </div>
+
+    <div class="demo">Use a real email and password for your Pulse account.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app hidden">
+
+<header class="topbar">
+  <div class="logo">pulse.</div>
+
+  <button class="mobile-search-btn" type="button" onclick="toggleMobileSearch()" title="Search">⌕</button>
+
+  <div class="search">
+    <span>⌕</span>
+    <input id="searchInput" placeholder="Search people or posts..." oninput="searchPosts()">
+    <div id="searchResults" class="search-results hidden"></div>
+  </div>
+
+  <div class="top-actions">
+    <button class="top-home-btn" type="button" onclick="showPage('home')" title="Home">⌂<span class="top-label"> Home</span></button>
+    <button class="icon-btn" type="button" onclick="toggleDark()" title="Theme">◐</button>
+    <button class="icon-btn" type="button" onclick="showPage('notifications')" title="Notifications">♧</button>
+    <button id="topAvatar" class="avatar avatar-button" type="button" onclick="showPage('profile')" title="Open profile">A</button>
+    <button class="top-signout-btn" type="button" onclick="signOut()" title="Sign out">↪<span class="top-label"> Sign out</span></button>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <nav class="nav">
+    <button class="active" type="button" onclick="showPage('home',this)">🏠 Home</button>
+    <button type="button" onclick="showPage('explore',this)">🔥 Explore</button>
+    <button type="button" onclick="showPage('notifications',this)">🔔 Notifications</button>
+    <button type="button" onclick="showPage('profile',this)">👤 Profile</button>
+    <button id="adminNav" class="hidden" type="button" onclick="showPage('admin',this)">🛡️ Admin</button>
+  </nav>
+
+  <div class="profile-mini">
+    <button id="sideAvatar" class="avatar avatar-button" type="button" onclick="showPage('profile')" title="Open profile">A</button>
+    <h3 id="sideName">User</h3>
+    <p id="sideHandle">@user</p>
+    <button class="follow" style="margin-top:14px" type="button" onclick="signOut()">Sign out</button>
+  </div>
+</aside>
+
+<main>
+
+<section id="home" class="page active">
+  <h1 class="page-title">Home</h1>
+
+  <div class="composer">
+    <div class="composer-row">
+      <div id="composeAvatar" class="avatar">A</div>
+      <textarea id="postText" maxlength="500" placeholder="What's happening?"></textarea>
+    </div>
+
+    <div id="mediaPreview" class="media-preview hidden"></div>
+
+    <div class="composer-bottom">
+      <div>
+        <input id="mediaInput" type="file" accept="image/*,video/*" hidden onchange="handleMediaSelect(event)">
+        <button class="media-btn" type="button" onclick="document.getElementById('mediaInput').click()">📷 Add photo/video</button>
+        <button id="removeMediaBtn" class="media-btn hidden" type="button" onclick="removeSelectedMedia()">✕ Remove</button>
+      </div>
+      <button class="post-btn" type="button" onclick="createPost()">Post</button>
+    </div>
+  </div>
+
+  <div id="feed"></div>
+</section>
+
+<section id="explore" class="page">
+  <h1 class="page-title">Explore</h1>
+
+  <div class="right-card">
+    <h3>Trending now</h3>
+    <div class="trend"><small>01 · Technology</small><strong>#BuildInPublic</strong></div>
+    <div class="trend"><small>02 · Campus</small><strong>#EngineeringLife</strong></div>
+    <div class="trend"><small>03 · Creative</small><strong>#DesignDaily</strong></div>
+  </div>
+
+  <div id="exploreFeed"></div>
+</section>
+
+<section id="notifications" class="page">
+  <h1 class="page-title">Notifications</h1>
+  <div class="post">
+    <div class="empty">Notifications will appear here as Pulse grows.</div>
+  </div>
+</section>
+
+<section id="profile" class="page">
+  <div class="profile-card">
+    <div class="profile-cover"></div>
+
+    <div class="profile-info">
+      <div id="bigAvatar" class="avatar big-avatar">A</div>
+      <h2 id="profileName">User</h2>
+      <div id="profileHandle" style="color:#718096">@user</div>
+      <p id="profileBio">Building things, learning things, and sharing the journey. 🚀</p>
+      <div id="profileActionRow" class="profile-action-row"></div>
+      <div id="profileEditBox" class="profile-edit-box hidden"></div>
+
+      <div class="stats">
+        <div><b id="postCount">0</b><span>Posts</span></div>
+        <div><b id="followerCount">0</b><span>Followers</span></div>
+        <div><b id="followingCount">0</b><span>Following</span></div>
+        <div><b id="likeReceivedCount">0</b><span>Likes</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:18px"></div>
+  <div id="profileFeed"></div>
+</section>
+
+<section id="admin" class="page">
+  <h1 class="page-title">Admin Panel</h1>
+  <div class="admin-card">
+    <h3 style="margin-top:0">Pulse Administration</h3>
+    <p style="color:var(--muted);margin-bottom:0">Verified admin tools for managing posts and comments.</p>
+    <div class="admin-actions">
+      <button class="admin-danger" type="button" onclick="adminDeleteAllPosts()">Delete all posts</button>
+      <button class="admin-danger" type="button" onclick="adminDeleteAllComments()">Delete all comments</button>
+      <button class="icon-btn" type="button" onclick="loadAdminPanel()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="admin-card">
+    <h3 style="margin-top:0">Users</h3>
+    <div id="adminUsers"><div class="empty">Loading users...</div></div>
+  </div>
+  <div class="admin-card">
+    <h3 style="margin-top:0">Recent posts</h3>
+    <div id="adminPosts"><div class="empty">Loading posts...</div></div>
+  </div>
+</section>
+
+</main>
+
+<aside class="rightbar">
+  <div class="right-card">
+    <h3>Who to follow</h3>
+    <div id="peopleToFollow"><div class="empty">Loading users...</div></div>
+  </div>
+
+  <div class="right-card">
+    <h3>Trending</h3>
+    <div class="trend"><small>Technology</small><strong>#BuildInPublic</strong></div>
+    <div class="trend"><small>Campus</small><strong>#EngineeringLife</strong></div>
+  </div>
+</aside>
+
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+/* =====================================================
+   SUPABASE CONNECTION
+   These are your existing project credentials.
+===================================================== */
+
+const SUPABASE_URL =
+  "https://flrljgwmtatvcnfvbndc.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_hH3sEcWdrY4h6kKAh8a3qw_2N05gzv8";
+
+let supabaseClient = null;
+
+/*
+  IMPORTANT:
+  If the CDN fails to load, the login page still works
+  and the Create Account button can still switch modes.
+*/
+try {
+  if (!window.supabase || !window.supabase.createClient) {
+    throw new Error("Supabase library did not load.");
+  }
+
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+} catch (error) {
+  console.error("Supabase initialization error:", error);
+}
+
+/* APP STATE */
+let currentAuthUser = null;
+let currentProfile = null;
+let viewedProfile = null;
+let searchTimer = null;
+let posts = [];
+let likedPostIds = new Set();
+let authMode = "login";
+let selectedMediaFile = null;
+
+/* AUTH MODE */
+function switchAuthMode(){
+  authMode = authMode === "login" ? "signup" : "login";
+
+  const title = document.getElementById("authTitle");
+  const subtitle = document.getElementById("authSubtitle");
+  const button = document.getElementById("authButton");
+  const switchButton = document.getElementById("switchAuth");
+  const name = document.getElementById("loginName");
+  const username = document.getElementById("loginUsername");
+
+  if(authMode === "signup"){
+    title.textContent = "Create your account";
+    subtitle.textContent = "Join Pulse and start sharing.";
+    button.textContent = "Create Account";
+    switchButton.textContent = "Already have an account? Sign in";
+    name.classList.remove("hidden");
+    username.classList.remove("hidden");
+    document.getElementById("loginPassword").autocomplete = "new-password";
+  } else {
+    title.textContent = "Welcome back";
+    subtitle.textContent = "Sign in to your Pulse account.";
+    button.textContent = "Sign In";
+    switchButton.textContent = "Create account";
+    name.classList.add("hidden");
+    username.classList.add("hidden");
+    document.getElementById("loginPassword").autocomplete = "current-password";
+  }
+}
+
+/* AUTH */
+async function handleAuth(){
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  if(!email || !password){
+    showToast("Enter your email and password.");
+    return;
+  }
+
+  if(password.length < 6){
+    showToast("Password must be at least 6 characters.");
+    return;
+  }
+
+  if(!supabaseClient){
+    showToast("Supabase could not load. Refresh the page and try again.");
+    console.error("Supabase client is unavailable.");
+    return;
+  }
+
+  const button = document.getElementById("authButton");
+  button.disabled = true;
+
+  try {
+    if(authMode === "signup"){
+      await signUp(email, password);
+    } else {
+      await signIn(email, password);
+    }
+  } catch(error) {
+    console.error(error);
+    showToast(error.message || "Something went wrong.");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+/* SIGN UP */
+async function signUp(email,password){
+  const displayName = document.getElementById("loginName").value.trim();
+  const username = document.getElementById("loginUsername").value.trim().toLowerCase();
+
+  if(!displayName || !username){
+    showToast("Enter your display name and username.");
+    return;
+  }
+
+  if(!/^[a-z0-9_]{3,30}$/.test(username)){
+    showToast("Username must be 3–30 characters using letters, numbers, or _.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options:{
+      data:{
+        display_name:displayName,
+        username:username
+      }
+    }
+  });
+
+  if(error){
+    showToast(error.message);
+    return;
+  }
+
+  if(!data.user){
+    showToast("Could not create account.");
+    return;
+  }
+
+  /*
+    Email confirmation is ON in your Supabase project.
+    Therefore a new account normally needs email
+    confirmation before the first sign-in.
+  */
+  if(!data.session){
+    showToast("Account created! Check your email, confirm it, then sign in.");
+    switchAuthMode();
+
+    document.getElementById("loginEmail").value = email;
+    document.getElementById("loginPassword").value = "";
+
+    return;
+  }
+
+  currentAuthUser = data.user;
+
+  const profileOK = await ensureProfile();
+
+  if(profileOK){
+    await openApp();
+  }
+}
+
+/* SIGN IN */
+async function signIn(email,password){
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if(error){
+    showToast(error.message);
+    return;
+  }
+
+  currentAuthUser = data.user;
+
+  const profileOK = await ensureProfile();
+
+  if(profileOK){
+    await openApp();
+  }
+}
+
+/* ENSURE PROFILE */
+async function ensureProfile(){
+  if(!currentAuthUser) return false;
+
+  const { data, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id",currentAuthUser.id)
+      .maybeSingle();
+
+  if(error){
+    console.error("Profile lookup error:",error);
+    showToast("Profile error: " + error.message);
+    return false;
+  }
+
+  if(data){
+    currentProfile = data;
+    setUser();
+    return true;
+  }
+
+  const metadata = currentAuthUser.user_metadata || {};
+
+  const displayName =
+    metadata.display_name ||
+    (currentAuthUser.email
+      ? currentAuthUser.email.split("@")[0]
+      : "Pulse User");
+
+  let username =
+    metadata.username ||
+    ("user_" + currentAuthUser.id.replace(/-/g,"").slice(0,8));
+
+  username = username
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g,"")
+    .slice(0,30);
+
+  if(username.length < 3){
+    username =
+      "user_" +
+      currentAuthUser.id.replace(/-/g,"").slice(0,8);
+  }
+
+  let result =
+    await supabaseClient
+      .from("profiles")
+      .insert({
+        id:currentAuthUser.id,
+        username:username,
+        display_name:displayName,
+        bio:"Building things, learning things, and sharing the journey. 🚀"
+      })
+      .select()
+      .single();
+
+  if(result.error && result.error.code === "23505"){
+    username =
+      username.slice(0,24) +
+      "_" +
+      Math.floor(1000 + Math.random() * 9000);
+
+    result =
+      await supabaseClient
+        .from("profiles")
+        .insert({
+          id:currentAuthUser.id,
+          username:username,
+          display_name:displayName,
+          bio:"Building things, learning things, and sharing the journey. 🚀"
+        })
+        .select()
+        .single();
+  }
+
+  if(result.error){
+    console.error("Profile creation error:",result.error);
+    showToast("Could not create profile: " + result.error.message);
+    return false;
+  }
+
+  currentProfile = result.data;
+  setUser();
+  return true;
+}
+
+/* DISPLAY USER */
+function getInitials(name){
+  return String(name || "U")
+    .split(" ")
+    .map(x => x[0])
+    .join("")
+    .slice(0,2)
+    .toUpperCase();
+}
+
+function avatarMarkup(profile, extraClass=""){
+  const name = profile?.display_name || "User";
+  const cls = `avatar ${extraClass}`.trim();
+  if(profile?.avatar_url){
+    return `<div class="${cls}"><img src="${escapeHTML(profile.avatar_url)}" alt="${escapeHTML(name)}" loading="lazy"></div>`;
+  }
+  return `<div class="${cls}">${escapeHTML(getInitials(name))}</div>`;
+}
+
+function setAvatarElement(element, profile){
+  if(!element || !profile) return;
+  if(profile.avatar_url){
+    element.innerHTML = `<img src="${escapeHTML(profile.avatar_url)}" alt="${escapeHTML(profile.display_name || "User")}">`;
+  }else{
+    element.textContent = getInitials(profile.display_name);
+  }
+}
+
+function setUser(){
+  if(!currentProfile) return;
+
+  ["topAvatar","sideAvatar","composeAvatar"].forEach(id=>{
+    const element = document.getElementById(id);
+    if(element) setAvatarElement(element,currentProfile);
+  });
+
+  document.getElementById("sideName").innerHTML =
+    escapeHTML(currentProfile.display_name) +
+    (currentProfile.is_admin === true ? ' <span class="verified-badge" title="Verified Pulse Admin">✓</span>' : '');
+
+  document.getElementById("sideHandle").textContent =
+    "@" + currentProfile.username;
+
+  const adminNav = document.getElementById("adminNav");
+  if(adminNav){
+    adminNav.classList.toggle("hidden", currentProfile.is_admin !== true);
+  }
+
+  if(!viewedProfile || viewedProfile.id === currentProfile.id){
+    viewedProfile = currentProfile;
+    renderViewedProfileHeader();
+  }
+}
+
+function verifiedMark(profile){
+  return profile && profile.is_admin === true
+    ? ' <span class="verified-badge" title="Verified Pulse Admin">✓</span>'
+    : '';
+}
+
+function renderViewedProfileHeader(){
+  const profile = viewedProfile || currentProfile;
+  if(!profile) return;
+
+  const avatar = document.getElementById("bigAvatar");
+  if(avatar) setAvatarElement(avatar,profile);
+
+  const name = document.getElementById("profileName");
+  if(name){
+    name.innerHTML = escapeHTML(profile.display_name) + verifiedMark(profile);
+  }
+
+  const handle = document.getElementById("profileHandle");
+  if(handle) handle.textContent = "@" + profile.username;
+
+  const bio = document.getElementById("profileBio");
+  if(bio) bio.textContent = profile.bio || "";
+
+  const actionRow = document.getElementById("profileActionRow");
+  if(actionRow){
+    if(currentAuthUser && profile.id === currentAuthUser.id){
+      actionRow.innerHTML = `
+        <button class="profile-follow-btn" type="button" onclick="openEditProfile()">Edit profile</button>
+      `;
+    }else{
+      actionRow.innerHTML = `
+        <button id="profileFollowBtn" class="profile-follow-btn" type="button"
+          onclick="toggleFollow('${profile.id}')">Follow</button>
+      `;
+      refreshProfileFollowButton();
+    }
+  }
+}
+
+function openEditProfile(){
+  if(!currentAuthUser || !currentProfile) return;
+
+  const box=document.getElementById("profileEditBox");
+  if(!box) return;
+
+  box.classList.remove("hidden");
+  box.innerHTML = `
+    <div class="profile-edit-avatar">
+      ${avatarMarkup(currentProfile)}
+      <div>
+        <b>Profile photo</b>
+        <div style="color:var(--muted);font-size:12px">JPG, PNG, GIF or WEBP recommended.</div>
+        <input id="profileAvatarInput" type="file" accept="image/*" onchange="previewProfileAvatar(event)" style="margin-top:7px">
+      </div>
+    </div>
+
+    <label for="editDisplayName">Name</label>
+    <input id="editDisplayName" maxlength="80" value="${escapeHTML(currentProfile.display_name || "")}" placeholder="Your name">
+
+    <label for="editUsername">Username</label>
+    <input id="editUsername" maxlength="30" value="${escapeHTML(currentProfile.username || "")}" placeholder="username">
+
+    <label for="editBio">Bio</label>
+    <textarea id="editBio" maxlength="160" placeholder="Tell people about yourself">${escapeHTML(currentProfile.bio || "")}</textarea>
+
+    <div id="profileAvatarPreview" style="margin-top:10px"></div>
+    <div class="profile-edit-actions">
+      <button class="profile-secondary-btn" type="button" onclick="cancelEditProfile()">Cancel</button>
+      <button class="profile-follow-btn" type="button" onclick="saveProfileChanges()">Save changes</button>
+    </div>
+  `;
+}
+
+function cancelEditProfile(){
+  const box=document.getElementById("profileEditBox");
+  if(box){ box.classList.add("hidden"); box.innerHTML=""; }
+}
+
+function previewProfileAvatar(event){
+  const file=event.target.files && event.target.files[0];
+  const preview=document.getElementById("profileAvatarPreview");
+  if(!file || !preview) return;
+
+  if(!file.type.startsWith("image/")){
+    showToast("Please choose an image.");
+    event.target.value="";
+    preview.innerHTML="";
+    return;
+  }
+
+  if(file.size > 5 * 1024 * 1024){
+    showToast("Profile picture must be 5 MB or less.");
+    event.target.value="";
+    preview.innerHTML="";
+    return;
+  }
+
+  const url=URL.createObjectURL(file);
+  preview.innerHTML=`<img src="${url}" alt="Profile preview" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--card)">`;
+}
+
+async function saveProfileChanges(){
+  if(!currentAuthUser || !currentProfile) return;
+
+  const displayName=document.getElementById("editDisplayName")?.value.trim() || "";
+  const username=(document.getElementById("editUsername")?.value.trim() || "").toLowerCase();
+  const bio=document.getElementById("editBio")?.value.trim() || "";
+  const avatarInput=document.getElementById("profileAvatarInput");
+  const avatarFile=avatarInput?.files?.[0] || null;
+
+  if(!displayName){ showToast("Name cannot be empty."); return; }
+  if(!/^[a-z0-9_]{3,30}$/.test(username)){
+    showToast("Username must be 3–30 characters using letters, numbers, or _.");
+    return;
+  }
+  if(bio.length > 160){ showToast("Bio must be 160 characters or less."); return; }
+
+  let avatarUrl=currentProfile.avatar_url || null;
+
+  if(avatarFile){
+    const safeName=avatarFile.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+    const path=`${currentAuthUser.id}/avatar-${Date.now()}-${safeName}`;
+
+    showToast("Uploading profile picture…");
+    const {error:uploadError}=await supabaseClient.storage
+      .from("post-media")
+      .upload(path,avatarFile,{cacheControl:"3600",upsert:false,contentType:avatarFile.type});
+
+    if(uploadError){
+      showToast("Profile picture upload failed: " + uploadError.message);
+      return;
+    }
+
+    avatarUrl=supabaseClient.storage.from("post-media").getPublicUrl(path).data.publicUrl;
+  }
+
+  const {data,error}=await supabaseClient
+    .from("profiles")
+    .update({
+      display_name:displayName,
+      username:username,
+      bio:bio,
+      avatar_url:avatarUrl
+    })
+    .eq("id",currentAuthUser.id)
+    .select("*")
+    .single();
+
+  if(error){
+    if(error.code === "23505") showToast("That username is already taken.");
+    else showToast("Could not update profile: " + error.message);
+    return;
+  }
+
+  currentProfile=data;
+  if(viewedProfile && viewedProfile.id === currentAuthUser.id) viewedProfile=data;
+  setUser();
+  renderViewedProfileHeader();
+  cancelEditProfile();
+  await loadPosts();
+  await loadPeople();
+  showToast("Profile updated! ✓");
+}
+
+async function refreshProfileFollowButton(){
+  if(!currentAuthUser || !viewedProfile || viewedProfile.id === currentAuthUser.id) return;
+
+  const {data,error} = await supabaseClient
+    .from("follows")
+    .select("follower_id")
+    .eq("follower_id",currentAuthUser.id)
+    .eq("following_id",viewedProfile.id)
+    .maybeSingle();
+
+  if(error) return;
+
+  const btn=document.getElementById("profileFollowBtn");
+  if(!btn) return;
+
+  const following=!!data;
+  btn.textContent=following ? "Following" : "Follow";
+  btn.classList.toggle("following",following);
+}
+
+async function showProfile(userId){
+  if(!currentAuthUser) return;
+
+  const targetId = userId || currentAuthUser.id;
+
+  const {data,error} = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("id",targetId)
+    .maybeSingle();
+
+  if(error || !data){
+    showToast(error ? error.message : "Profile not found.");
+    return;
+  }
+
+  viewedProfile = data;
+  renderViewedProfileHeader();
+
+  const [{count:postCount},{count:followerCount},{count:followingCount}] = await Promise.all([
+    supabaseClient.from("posts").select("*",{count:"exact",head:true}).eq("user_id",targetId),
+    supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("following_id",targetId),
+    supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",targetId)
+  ]);
+
+  let likeReceivedCount=0;
+  const {data:userPostIds,error:userPostError}=await supabaseClient
+    .from("posts")
+    .select("id")
+    .eq("user_id",targetId);
+
+  if(!userPostError && userPostIds && userPostIds.length){
+    const {count,error:likeError}=await supabaseClient
+      .from("likes")
+      .select("*",{count:"exact",head:true})
+      .in("post_id",userPostIds.map(p=>p.id));
+    if(!likeError) likeReceivedCount=count || 0;
+  }
+
+  document.getElementById("postCount").textContent = postCount || 0;
+  document.getElementById("followerCount").textContent = followerCount || 0;
+  document.getElementById("followingCount").textContent = followingCount || 0;
+  document.getElementById("likeReceivedCount").textContent = likeReceivedCount;
+
+  await loadProfilePosts(targetId);
+  await refreshProfileFollowButton();
+}
+
+async function toggleFollow(userId){
+  if(!currentAuthUser){
+    showToast("Please sign in first.");
+    return;
+  }
+
+  if(userId === currentAuthUser.id){
+    showToast("You can't follow yourself.");
+    return;
+  }
+
+  const {data:existing,error:checkError} = await supabaseClient
+    .from("follows")
+    .select("follower_id,following_id")
+    .eq("follower_id",currentAuthUser.id)
+    .eq("following_id",userId)
+    .maybeSingle();
+
+  if(checkError){
+    showToast(checkError.message);
+    return;
+  }
+
+  if(existing){
+    const {error} = await supabaseClient
+      .from("follows")
+      .delete()
+      .eq("follower_id",currentAuthUser.id)
+      .eq("following_id",userId);
+
+    if(error){ showToast(error.message); return; }
+    showToast("Unfollowed.");
+  }else{
+    const {error} = await supabaseClient
+      .from("follows")
+      .insert({follower_id:currentAuthUser.id,following_id:userId});
+
+    if(error){ showToast(error.message); return; }
+    showToast("Following! ✓");
+  }
+
+  if(viewedProfile && viewedProfile.id === userId){
+    await showProfile(userId);
+  }
+  await loadPeople();
+}
+
+function goToMyProfile(){
+  showPage("profile");
+  showProfile(currentAuthUser.id);
+}
+
+/* LOAD POSTS */
+async function loadPosts(){
+  if(!supabaseClient) return;
+
+  const { data,error } =
+    await supabaseClient
+      .from("posts")
+      .select("id,user_id,content,created_at,media_url,media_type")
+      .order("created_at",{ascending:false});
+
+  if(error){
+    console.error("Posts error:",error);
+    showToast("Could not load posts: " + error.message);
+    return;
+  }
+
+  posts = data || [];
+
+  // Load post authors separately to avoid ambiguous Supabase relationships.
+  if(posts.length > 0){
+    const userIds = [...new Set(posts.map(p => p.user_id))];
+
+    const { data: profiles, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("*")
+        .in("id",userIds);
+
+    if(profileError){
+      console.error("Post profiles error:",profileError);
+      showToast("Could not load post profiles: " + profileError.message);
+      return;
+    }
+
+    const profileMap = {};
+    (profiles || []).forEach(profile => profileMap[profile.id] = profile);
+
+    posts = posts.map(post => ({
+      ...post,
+      profiles: profileMap[post.user_id] || null
+    }));
+  }
+
+  await loadLikes();
+  await renderPosts();
+  await updatePostCount();
+}
+
+/* LOAD LIKES */
+async function loadLikes(){
+  likedPostIds = new Set();
+
+  if(!currentAuthUser || posts.length === 0) return;
+
+  const ids = posts.map(p=>p.id);
+
+  const { data,error } =
+    await supabaseClient
+      .from("likes")
+      .select("post_id")
+      .eq("user_id",currentAuthUser.id)
+      .in("post_id",ids);
+
+  if(error){
+    console.error("Likes error:",error);
+    return;
+  }
+
+  (data || []).forEach(row=>{
+    likedPostIds.add(row.post_id);
+  });
+}
+
+/* CREATE POST */
+async function createPost(){
+  if(!currentAuthUser){
+    showToast("Please sign in first.");
+    return;
+  }
+
+  const textarea = document.getElementById("postText");
+  const content = textarea.value.trim();
+
+  if(!content && !selectedMediaFile){
+    showToast("Write something or add a photo/video first.");
+    return;
+  }
+
+  if(content.length > 500){
+    showToast("Post must be 500 characters or less.");
+    return;
+  }
+
+  let mediaUrl = null;
+  let mediaType = null;
+
+  if(selectedMediaFile){
+    showToast("Uploading media…");
+
+    const safeName = selectedMediaFile.name
+      .replace(/[^a-zA-Z0-9._-]/g,"_");
+    const path = `${currentAuthUser.id}/${Date.now()}-${safeName}`;
+
+    const { error: uploadError } =
+      await supabaseClient.storage
+        .from("post-media")
+        .upload(path, selectedMediaFile, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: selectedMediaFile.type
+        });
+
+    if(uploadError){
+      console.error("Media upload error:",uploadError);
+      showToast("Media upload failed: " + uploadError.message);
+      return;
+    }
+
+    const { data: publicData } =
+      supabaseClient.storage
+        .from("post-media")
+        .getPublicUrl(path);
+
+    mediaUrl = publicData.publicUrl;
+    mediaType = selectedMediaFile.type.startsWith("video/") ? "video" : "image";
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("posts")
+      .insert({
+        user_id:currentAuthUser.id,
+        content:content || "",
+        media_url:mediaUrl,
+        media_type:mediaType
+      });
+
+  if(error){
+    showToast("Could not create post: " + error.message);
+    return;
+  }
+
+  textarea.value = "";
+  removeSelectedMedia();
+  await loadPosts();
+  showToast("Posted! 🎉");
+}
+
+function handleMediaSelect(event){
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+
+  const isImage = file.type.startsWith("image/");
+  const isVideo = file.type.startsWith("video/");
+
+  if(!isImage && !isVideo){
+    showToast("Please choose an image or video.");
+    event.target.value = "";
+    return;
+  }
+
+  // Client-side limits to keep uploads practical.
+  const maxBytes = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
+  if(file.size > maxBytes){
+    showToast(isVideo ? "Video must be 50 MB or less." : "Image must be 10 MB or less.");
+    event.target.value = "";
+    return;
+  }
+
+  selectedMediaFile = file;
+  const preview = document.getElementById("mediaPreview");
+  const removeBtn = document.getElementById("removeMediaBtn");
+  const objectUrl = URL.createObjectURL(file);
+
+  preview.classList.remove("hidden");
+  removeBtn.classList.remove("hidden");
+
+  preview.innerHTML = isVideo
+    ? `<video controls playsinline src="${objectUrl}"></video><div class="media-name">${escapeHTML(file.name)}</div>`
+    : `<img src="${objectUrl}" alt="Selected image"><div class="media-name">${escapeHTML(file.name)}</div>`;
+}
+
+function removeSelectedMedia(){
+  selectedMediaFile = null;
+  const input = document.getElementById("mediaInput");
+  const preview = document.getElementById("mediaPreview");
+  const removeBtn = document.getElementById("removeMediaBtn");
+
+  if(input) input.value = "";
+  if(preview){
+    preview.innerHTML = "";
+    preview.classList.add("hidden");
+  }
+  if(removeBtn) removeBtn.classList.add("hidden");
+}
+
+/* LOAD COMMENTS */
+async function loadComments(){
+  if(posts.length === 0) return {};
+
+  const ids = posts.map(p=>p.id);
+
+  const { data,error } =
+    await supabaseClient
+      .from("comments")
+      .select("id,post_id,user_id,content,created_at")
+      .in("post_id",ids)
+      .order("created_at",{ascending:true});
+
+  if(error){
+    console.error("Comments error:",error);
+    return {};
+  }
+
+  const comments = data || [];
+  const userIds = [...new Set(comments.map(c => c.user_id))];
+  const profileMap = {};
+
+  if(userIds.length > 0){
+    const { data: profiles, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("*")
+        .in("id",userIds);
+
+    if(!profileError){
+      (profiles || []).forEach(profile => profileMap[profile.id] = profile);
+    }
+  }
+
+  const grouped = {};
+
+  comments.forEach(comment=>{
+    if(!grouped[comment.post_id]){
+      grouped[comment.post_id] = [];
+    }
+
+    grouped[comment.post_id].push({
+      ...comment,
+      profiles: profileMap[comment.user_id] || null
+    });
+  });
+
+  return grouped;
+}
+
+/* POST HTML */
+function postHTML(post,commentList){
+  const profile = post.profiles || {};
+  const name = profile.display_name || "Unknown user";
+  const username = profile.username || "user";
+  const initial = getInitials(name);
+  const liked = likedPostIds.has(post.id);
+
+  const comments = (commentList || []).map(comment=>{
+    const cp = comment.profiles || {};
+
+    return `
+      <div class="comment">
+        <b>${escapeHTML(cp.display_name || "User")}${cp.is_admin === true ? ' <span class="verified-badge" title="Verified Pulse Admin">✓</span>' : ''}</b>
+        ${escapeHTML(comment.content)}
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <article id="post-${post.id}" class="post"
+      data-text="${escapeHTML((post.content+" "+name+" "+username).toLowerCase())}">
+
+      <div class="post-head">
+        <button class="avatar avatar-button" type="button"
+          onclick="showPage('profile');showProfile('${profile.id || post.user_id}')"
+          title="View profile">${escapeHTML(initial)}</button>
+
+        <div class="clickable-profile" onclick="showPage('profile');showProfile('${profile.id || post.user_id}')">
+          <strong>${escapeHTML(name)}${profile.is_admin === true ? ' <span class="verified-badge" title="Verified Pulse Admin">✓</span>' : ''}</strong>
+          <small>
+            @${escapeHTML(username)}
+            ·
+            ${escapeHTML(formatTime(post.created_at))}
+          </small>
+        </div>
+
+        ${currentAuthUser && (post.user_id === currentAuthUser.id || (currentProfile && currentProfile.is_admin === true)) ? `
+          <button class="more" type="button" title="Delete post"
+            onclick="${currentProfile && currentProfile.is_admin === true && post.user_id !== currentAuthUser.id ? `adminDeletePost(${post.id})` : `deleteOwnPost(${post.id})`}" style="color:var(--danger)">
+            🗑️
+          </button>
+        ` : `
+          <button class="more" type="button"
+            onclick="showToast('More options coming soon')">
+            •••
+          </button>
+        `}
+      </div>
+
+      <div class="post-body">
+        ${escapeHTML(post.content).replace(/\n/g,"<br>")}
+      </div>
+
+      ${post.media_url ? (post.media_type === "video"
+        ? `<div class="post-media"><video controls playsinline src="${escapeHTML(post.media_url)}"></video></div>`
+        : `<div class="post-media"><img src="${escapeHTML(post.media_url)}" alt="Post image" loading="lazy"></div>`) : ""}
+
+      <div class="post-actions">
+
+        <button class="action ${liked ? "liked" : ""}"
+          type="button" onclick="likePost(${post.id})">
+          ${liked ? "♥" : "♡"}
+          <span class="like-count" data-like-post="${post.id}">0</span>
+        </button>
+
+        <button class="action" type="button"
+          onclick="toggleComments(${post.id})">
+          💬
+          <span class="comment-count" data-comment-post="${post.id}">
+            ${(commentList || []).length}
+          </span>
+        </button>
+
+        <button class="action" type="button"
+          onclick="sharePost(${post.id})">
+          ↗ Share
+        </button>
+
+      </div>
+
+      <div class="comments" id="comments-${post.id}">
+        <div>${comments}</div>
+
+        <div class="comment-form">
+          <input id="comment-${post.id}" maxlength="500"
+            placeholder="Write a comment...">
+
+          <button class="post-btn" type="button"
+            onclick="addComment(${post.id})">
+            Send
+          </button>
+        </div>
+      </div>
+
+    </article>
+  `;
+}
+
+/* RENDER POSTS */
+async function renderPosts(){
+  const feed = document.getElementById("feed");
+  const exploreFeed = document.getElementById("exploreFeed");
+
+  if(posts.length === 0){
+    const empty = `
+      <div class="post">
+        <div class="empty">
+          No posts yet. Be the first to post! 🚀
+        </div>
+      </div>
+    `;
+
+    feed.innerHTML = empty;
+    exploreFeed.innerHTML = empty;
+    return;
+  }
+
+  const grouped = await loadComments();
+
+  const html = posts.map(post =>
+    postHTML(post,grouped[post.id] || [])
+  ).join("");
+
+  feed.innerHTML = html;
+  exploreFeed.innerHTML = html;
+
+  await updateLikeCounts();
+}
+
+/* LIKE COUNTS */
+async function updateLikeCounts(postList=posts){
+  if(!supabaseClient) return;
+
+  for(const post of postList){
+    const { count,error } =
+      await supabaseClient
+        .from("likes")
+        .select("*",{count:"exact",head:true})
+        .eq("post_id",post.id);
+
+    if(error) continue;
+
+    document.querySelectorAll(
+      '[data-like-post="' + post.id + '"]'
+    ).forEach(element=>{
+      element.textContent = count || 0;
+    });
+  }
+}
+
+/* LIKE */
+async function likePost(postId){
+  if(!currentAuthUser){
+    showToast("Please sign in first.");
+    return;
+  }
+
+  const liked = likedPostIds.has(postId);
+
+  if(liked){
+    const { error } =
+      await supabaseClient
+        .from("likes")
+        .delete()
+        .eq("user_id",currentAuthUser.id)
+        .eq("post_id",postId);
+
+    if(error){
+      showToast(error.message);
+      return;
+    }
+
+    likedPostIds.delete(postId);
+  } else {
+    const { error } =
+      await supabaseClient
+        .from("likes")
+        .insert({
+          user_id:currentAuthUser.id,
+          post_id:postId
+        });
+
+    if(error){
+      showToast(error.message);
+      return;
+    }
+
+    likedPostIds.add(postId);
+  }
+
+  await loadPosts();
+}
+
+/* COMMENTS */
+function toggleComments(postId){
+  const element =
+    document.getElementById("comments-" + postId);
+
+  if(!element) return;
+
+  element.style.display =
+    element.style.display === "block"
+      ? "none"
+      : "block";
+}
+
+async function addComment(postId){
+  if(!currentAuthUser){
+    showToast("Please sign in first.");
+    return;
+  }
+
+  const input =
+    document.getElementById("comment-" + postId);
+
+  const content = input.value.trim();
+
+  if(!content){
+    showToast("Write a comment first.");
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("comments")
+      .insert({
+        user_id:currentAuthUser.id,
+        post_id:postId,
+        content:content
+      });
+
+  if(error){
+    showToast(error.message);
+    return;
+  }
+
+  input.value = "";
+  await loadPosts();
+
+  const comments =
+    document.getElementById("comments-" + postId);
+
+  if(comments) comments.style.display = "block";
+
+  showToast("Comment added 💬");
+}
+
+/* SHARE */
+async function sharePost(postId){
+  const url =
+    location.href.split("#")[0] + "#post-" + postId;
+
+  try{
+    await navigator.clipboard.writeText(url);
+    showToast("Post link copied!");
+  }catch{
+    showToast(url);
+  }
+}
+
+/* PROFILE */
+async function updatePostCount(){
+  if(!currentAuthUser) return;
+  await showProfile(viewedProfile ? viewedProfile.id : currentAuthUser.id);
+}
+
+async function loadProfilePosts(userId){
+  if(!currentAuthUser) return;
+
+  const targetId = userId || currentAuthUser.id;
+
+  const { data,error } =
+    await supabaseClient
+      .from("posts")
+      .select("id,user_id,content,created_at,media_url,media_type")
+      .eq("user_id",targetId)
+      .order("created_at",{ascending:false});
+
+  if(error) return;
+
+  const profileFeed =
+    document.getElementById("profileFeed");
+
+  if(!data || data.length === 0){
+    profileFeed.innerHTML = `
+      <div class="right-card">
+        <div class="empty">
+          No posts yet.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const profileData = data || [];
+  const profileFeedUser = viewedProfile || currentProfile;
+
+  profileData.forEach(post => {
+    post.profiles = profileFeedUser;
+  });
+
+  profileFeed.innerHTML =
+    profileData.map(post=>postHTML(post,[])).join("");
+
+  await updateLikeCounts(profileData);
+}
+
+/* PEOPLE */
+async function loadPeople(){
+  if(!currentAuthUser) return;
+
+  const { data,error } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .neq("id",currentAuthUser.id)
+      .limit(8);
+
+  if(error){
+    console.error("People error:",error);
+    return;
+  }
+
+  const container = document.getElementById("peopleToFollow");
+
+  if(!data || data.length === 0){
+    container.innerHTML = `<div class="empty">No other users yet.</div>`;
+    return;
+  }
+
+  const ids=data.map(p=>p.id);
+  const {data:follows} = await supabaseClient
+    .from("follows")
+    .select("following_id")
+    .eq("follower_id",currentAuthUser.id)
+    .in("following_id",ids);
+
+  const followingSet=new Set((follows||[]).map(x=>x.following_id));
+
+  container.innerHTML =
+    data.map(person=>`
+      <div class="person">
+        <button class="avatar avatar-button" type="button"
+          onclick="showProfile('${person.id}');showPage('profile')"
+          title="View profile">
+          ${escapeHTML(getInitials(person.display_name))}
+        </button>
+
+        <div class="clickable-profile" onclick="showProfile('${person.id}');showPage('profile')">
+          <b>${escapeHTML(person.display_name)}${verifiedMark(person)}</b>
+          <small style="display:block;color:#718096">
+            @${escapeHTML(person.username)}
+          </small>
+        </div>
+
+        <button class="follow ${followingSet.has(person.id) ? "following" : ""}" type="button"
+          onclick="toggleFollow('${person.id}')">
+          ${followingSet.has(person.id) ? "Following" : "Follow"}
+        </button>
+      </div>
+    `).join("");
+}
+
+async function deleteOwnPost(postId){
+  if(!currentAuthUser) return;
+
+  const post=posts.find(p=>p.id===postId);
+  if(post && post.user_id !== currentAuthUser.id){
+    showToast("You can only delete your own posts.");
+    return;
+  }
+
+  if(!confirm("Delete your post? This cannot be undone.")) return;
+  await deletePostFromDatabase(postId,false);
+}
+
+async function deletePostFromDatabase(postId,adminMode=false){
+  if(!currentAuthUser) return;
+
+  const {data:targetPost,error:fetchError}=await supabaseClient
+    .from("posts")
+    .select("id,user_id,media_url")
+    .eq("id",postId)
+    .maybeSingle();
+
+  if(fetchError){
+    showToast("Could not find post: " + fetchError.message);
+    return;
+  }
+  if(!targetPost){
+    showToast("Post not found or already deleted.");
+    return;
+  }
+
+  const allowed=targetPost.user_id === currentAuthUser.id || adminMode === true;
+  if(!allowed){
+    showToast("You are not allowed to delete this post.");
+    return;
+  }
+
+  const {data:deletedRows,error}=await supabaseClient
+    .from("posts")
+    .delete()
+    .eq("id",postId)
+    .select("id");
+
+  if(error){
+    showToast("Delete failed: " + error.message);
+    console.error("Post delete error:",error);
+    return;
+  }
+
+  if(!deletedRows || deletedRows.length === 0){
+    showToast(adminMode
+      ? "Admin delete was blocked by database permissions. Check the admin DELETE policy."
+      : "Delete was blocked by database permissions. Check your post DELETE policy.");
+    return;
+  }
+
+  // Best-effort removal of the associated media file. The database post is already deleted.
+  if(targetPost.media_url){
+    const marker="/storage/v1/object/public/post-media/";
+    const index=targetPost.media_url.indexOf(marker);
+    if(index !== -1){
+      const storagePath=decodeURIComponent(targetPost.media_url.slice(index+marker.length));
+      const {error:storageError}=await supabaseClient.storage.from("post-media").remove([storagePath]);
+      if(storageError) console.warn("Media cleanup failed:",storageError.message);
+    }
+  }
+
+  showToast(adminMode ? "Post deleted by admin." : "Your post was deleted.");
+  await loadPosts();
+  if(viewedProfile && viewedProfile.id) await showProfile(viewedProfile.id);
+  if(document.getElementById("admin").classList.contains("active")) await loadAdminPanel();
+}
+
+/* ADMIN */
+function requireAdmin(){
+  if(!currentAuthUser || !currentProfile || currentProfile.is_admin !== true){
+    showToast("Admin access required.");
+    return false;
+  }
+  return true;
+}
+
+async function adminDeletePost(postId){
+  if(!requireAdmin()) return;
+  if(!confirm("Delete this post as admin? This cannot be undone.")) return;
+  await deletePostFromDatabase(postId,true);
+}
+
+async function adminDeleteAllPosts(){
+  if(!requireAdmin()) return;
+  if(!confirm("Delete ALL Pulse posts? This cannot be undone.")) return;
+
+  const { error } = await supabaseClient
+    .from("posts")
+    .delete()
+    .neq("id",0);
+
+  if(error){
+    showToast("Delete failed: " + error.message);
+    return;
+  }
+
+  showToast("All posts deleted.");
+  await loadPosts();
+  await loadAdminPanel();
+}
+
+async function adminDeleteAllComments(){
+  if(!requireAdmin()) return;
+  if(!confirm("Delete ALL comments? This cannot be undone.")) return;
+
+  const { error } = await supabaseClient
+    .from("comments")
+    .delete()
+    .neq("id",0);
+
+  if(error){
+    showToast("Delete failed: " + error.message);
+    return;
+  }
+
+  showToast("All comments deleted.");
+  await loadPosts();
+  await loadAdminPanel();
+}
+
+async function loadAdminPanel(){
+  if(!requireAdmin()) return;
+
+  const usersBox = document.getElementById("adminUsers");
+  const postsBox = document.getElementById("adminPosts");
+  if(!usersBox || !postsBox) return;
+
+  const [{data:users,error:userError},{data:adminPosts,error:postError}] = await Promise.all([
+    supabaseClient.from("profiles").select("*").order("created_at",{ascending:false}),
+    supabaseClient.from("posts").select("id,user_id,content,created_at").order("created_at",{ascending:false}).limit(20)
+  ]);
+
+  if(userError){ usersBox.innerHTML = `<div class="empty">${escapeHTML(userError.message)}</div>`; }
+  else {
+    usersBox.innerHTML = (users || []).map(u=>`
+      <div class="admin-user">
+        ${avatarMarkup(u)}
+        <div class="admin-user-info">
+          <b>${escapeHTML(u.display_name)}${u.is_admin === true ? ' <span class="verified-badge">✓</span>' : ''}</b>
+          <small>@${escapeHTML(u.username)}</small>
+        </div>
+        ${u.is_admin === true ? '<span class="admin-badge">Admin</span>' : ''}
+      </div>
+    `).join("") || '<div class="empty">No users found.</div>';
+  }
+
+  if(postError){ postsBox.innerHTML = `<div class="empty">${escapeHTML(postError.message)}</div>`; }
+  else {
+    postsBox.innerHTML = (adminPosts || []).map(p=>`
+      <div class="admin-user">
+        <div class="admin-user-info">
+          <b>${escapeHTML((p.content || "(media-only post)").slice(0,80))}</b>
+          <small>Post #${p.id} · ${escapeHTML(formatTime(p.created_at))}</small>
+        </div>
+        <button class="admin-danger" type="button" onclick="adminDeletePost(${p.id})">Delete</button>
+      </div>
+    `).join("") || '<div class="empty">No posts found.</div>';
+  }
+}
+
+/* NAVIGATION */
+function showPage(id,button){
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.remove("active");
+  });
+
+  const page = document.getElementById(id);
+  if(page) page.classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(btn=>{
+    btn.classList.remove("active");
+  });
+
+  if(button) button.classList.add("active");
+
+  if(id === "profile"){
+    showProfile(currentAuthUser ? currentAuthUser.id : null);
+  }
+
+  if(id === "admin"){
+    loadAdminPanel();
+  }
+}
+
+/* SEARCH */
+function searchPosts(){
+  clearTimeout(searchTimer);
+
+  const input=document.getElementById("searchInput");
+  const results=document.getElementById("searchResults");
+  if(!input || !results) return;
+
+  const query=input.value.trim().toLowerCase();
+
+  document.querySelectorAll(".post").forEach(post=>{
+    const text=post.dataset.text || "";
+    post.style.display=query && !text.includes(query) ? "none" : "";
+  });
+
+  if(!query){
+    results.classList.add("hidden");
+    results.innerHTML="";
+    return;
+  }
+
+  searchTimer=setTimeout(async ()=>{
+    const [{data:users},{data:matchedPosts}] = await Promise.all([
+      supabaseClient.from("profiles")
+        .select("*")
+        .or(`username.ilike.%${query}%,display_name.ilike.%${query}%`)
+        .limit(6),
+      supabaseClient.from("posts")
+        .select("id,user_id,content,created_at")
+        .ilike("content",`%${query}%`)
+        .order("created_at",{ascending:false})
+        .limit(6)
+    ]);
+
+    const profileIds=[...(matchedPosts||[]).map(p=>p.user_id)];
+    let postProfiles=[];
+    if(profileIds.length){
+      const {data}=await supabaseClient.from("profiles")
+        .select("*")
+        .in("id",[...new Set(profileIds)]);
+      postProfiles=data||[];
+    }
+    const pmap={};
+    postProfiles.forEach(p=>pmap[p.id]=p);
+
+    let htmlResults="";
+
+    (users||[]).forEach(u=>{
+      htmlResults += `
+        <div class="search-result" onclick="openSearchProfile('${u.id}')">
+          ${avatarMarkup(u)}
+          <div class="sr-text">
+            <b>${escapeHTML(u.display_name)}${verifiedMark(u)}</b>
+            <small>@${escapeHTML(u.username)}</small>
+          </div>
+        </div>
+      `;
+    });
+
+    (matchedPosts||[]).forEach(post=>{
+      const u=pmap[post.user_id]||{};
+      htmlResults += `
+        <div class="search-result post-result" onclick="openSearchPost(${post.id})">
+          ${avatarMarkup(u)}
+          <div class="sr-text">
+            <b>${escapeHTML(u.display_name||"User")}${verifiedMark(u)}</b>
+            <small class="sr-preview">${escapeHTML(post.content||"(media post)")}</small>
+          </div>
+        </div>
+      `;
+    });
+
+    results.innerHTML=htmlResults || `<div class="empty">No results found.</div>`;
+    results.classList.remove("hidden");
+  },250);
+}
+
+function openSearchProfile(userId){
+  const results=document.getElementById("searchResults");
+  if(results) results.classList.add("hidden");
+  const input=document.getElementById("searchInput");
+  if(input) input.value="";
+  showPage("profile");
+  showProfile(userId);
+}
+
+function openSearchPost(postId){
+  const results=document.getElementById("searchResults");
+  if(results) results.classList.add("hidden");
+  const input=document.getElementById("searchInput");
+  if(input) input.value="";
+  document.querySelectorAll(".post").forEach(post=>post.style.display="");
+  const target=document.getElementById("post-"+postId);
+  if(target){
+    target.scrollIntoView({behavior:"smooth",block:"center"});
+    target.style.outline="3px solid var(--accent)";
+    setTimeout(()=>target.style.outline="",1800);
+  }else{
+    showPage("home");
+    showToast("Post found, but refresh the Home feed to view it.");
+  }
+}
+
+function toggleMobileSearch(){
+  const search=document.querySelector(".search");
+  if(!search) return;
+  search.classList.toggle("mobile-search-open");
+  if(search.classList.contains("mobile-search-open")){
+    const input=document.getElementById("searchInput");
+    if(input) input.focus();
+  }
+}
+
+/* DARK MODE */
+function toggleDark(){
+  document.body.classList.toggle("dark");
+
+  const dark =
+    document.body.classList.contains("dark");
+
+  document.documentElement.style.setProperty(
+    "--bg",dark ? "#101318" : "#f4f6f8"
+  );
+
+  document.documentElement.style.setProperty(
+    "--card",dark ? "#181c23" : "#ffffff"
+  );
+
+  document.documentElement.style.setProperty(
+    "--text",dark ? "#f4f6f8" : "#18212b"
+  );
+
+  document.documentElement.style.setProperty(
+    "--line",dark ? "#2a303a" : "#e5e9ef"
+  );
+}
+
+/* SIGN OUT */
+async function signOut(){
+  if(!supabaseClient) return;
+
+  const { error } =
+    await supabaseClient.auth.signOut();
+
+  if(error){
+    showToast(error.message);
+    return;
+  }
+
+  currentAuthUser = null;
+  currentProfile = null;
+  posts = [];
+  likedPostIds = new Set();
+
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+
+  showToast("Signed out.");
+}
+
+/* OPEN APP */
+async function openApp(){
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  if(!currentProfile){
+    const profileOK = await ensureProfile();
+    if(!profileOK) return;
+  }
+
+  await loadPosts();
+  await loadPeople();
+}
+
+/* INITIALIZE */
+async function initialize(){
+  if(!supabaseClient){
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("app").classList.add("hidden");
+    console.error("Pulse could not initialize because Supabase is unavailable.");
+    return;
+  }
+
+  const { data,error } =
+    await supabaseClient.auth.getSession();
+
+  if(error){
+    console.error(error);
+    showToast(error.message);
+    return;
+  }
+
+  if(data && data.session){
+    currentAuthUser = data.session.user;
+
+    const profileOK = await ensureProfile();
+
+    if(profileOK){
+      await openApp();
+    }
+  } else {
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("app").classList.add("hidden");
+  }
+}
+
+/* AUTH STATE */
+supabaseClient?.auth.onAuthStateChange((event,session)=>{
+  if(event === "SIGNED_IN" && session){
+    currentAuthUser = session.user;
+  }
+
+  if(event === "SIGNED_OUT"){
+    currentAuthUser = null;
+    currentProfile = null;
+  }
+});
+
+/* TIME */
+function formatTime(dateString){
+  const date = new Date(dateString);
+
+  const seconds =
+    Math.floor((Date.now()-date.getTime())/1000);
+
+  if(seconds < 60) return "just now";
+
+  const minutes = Math.floor(seconds/60);
+
+  if(minutes < 60) return minutes + " min ago";
+
+  const hours = Math.floor(minutes/60);
+
+  if(hours < 24) return hours + " hr ago";
+
+  const days = Math.floor(hours/24);
+
+  if(days < 7){
+    return days + " day" + (days === 1 ? "" : "s") + " ago";
+  }
+
+  return date.toLocaleDateString();
+}
+
+/* HTML ESCAPE */
+function escapeHTML(value){
+  return String(value ?? "")
+    .replace(/[&<>"']/g,character=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[character]));
+}
+
+/* TOAST */
+function showToast(message){
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(window.pulseToast);
+
+  window.pulseToast =
+    setTimeout(()=>{
+      toast.classList.remove("show");
+    },4000);
+}
+
+/* START */
+initialize();
+</script>
+
+</body>
+</html>
